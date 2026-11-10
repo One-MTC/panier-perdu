@@ -1,19 +1,11 @@
-// ====== À MODIFIER ======
-const LIEN_PAIEMENT = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK ?? ""; // lien Stripe, ajouté dans Vercel à l'action 5
-const DATE_LIVRAISON = "[À COMPLÉTER : ex. 30 novembre 2026]"; // date limite de livraison que tu t'engages à tenir
-const EMAIL_CONTACT = "[À COMPLÉTER : ton email]";
-// ========================
+import Link from "next/link";
+import { DATE_LIVRAISON, EMAIL_CONTACT } from "./config";
 
 function Bouton({ className = "" }: { className?: string }) {
-  const actif = LIEN_PAIEMENT.startsWith("https://");
   return (
-    <a
-      href={actif ? LIEN_PAIEMENT : "#"}
-      aria-disabled={!actif}
-      className={`block text-center bg-moutarde text-marine font-titre font-extrabold text-lg px-6 py-4 min-h-[56px] ${actif ? "" : "opacity-60 pointer-events-none"} ${className}`}
-    >
-      Réserver mon accès fondateur · 29 € par mois
-    </a>
+    <Link href="/commencer" className={`block text-center bg-moutarde text-marine font-titre font-extrabold text-lg px-6 py-4 min-h-[56px] ${className}`}>
+      Commencer, c’est gratuit
+    </Link>
   );
 }
 
@@ -36,7 +28,7 @@ export default function Accueil() {
         Deux emails de relance partent tout seuls vers chaque client qui a quitté ton site avec un panier plein.
       </p>
       <Bouton className="mt-8" />
-      <p className="mt-3 text-sm text-gris">Sans engagement, résiliable à tout moment. Satisfait ou remboursé 30 jours.</p>
+      <p className="mt-3 text-sm text-gris">Trois questions, deux minutes. Tu vois d’abord ce que ça te coûte, tu paies ensuite si ça te convient.</p>
 
       <section className="mt-16">
         <h2 className="font-titre font-extrabold text-3xl">Environ 7 paniers sur 10 ne vont jamais jusqu’au paiement.</h2>
@@ -64,15 +56,10 @@ export default function Accueil() {
         </p>
       </section>
 
-      <section id="offre" className="mt-14">
+      <section className="mt-14">
         <h2 className="font-titre font-extrabold text-3xl">29 € par mois, relances illimitées</h2>
-        <p className="mt-2 text-gris">Soit moins d’un euro par jour. Une seule récupération de panier peut déjà couvrir le mois.</p>
+        <p className="mt-2 text-gris">Soit moins d’un euro par jour. Sans engagement, résiliable à tout moment. Satisfait ou remboursé 30 jours.</p>
         <Bouton className="mt-6" />
-        <ul className="mt-4 text-sm space-y-1">
-          <li>Sans engagement, résiliable à tout moment.</li>
-          <li>Satisfait ou remboursé pendant 30 jours.</li>
-          <li>Paiement sécurisé par Stripe.</li>
-        </ul>
       </section>
 
       <section className="mt-14">
@@ -87,7 +74,6 @@ export default function Accueil() {
         </div>
       </section>
 
-      {/* Barre de paiement collée en bas sur mobile */}
       <div className="fixed bottom-0 inset-x-0 p-3 bg-papier/95 border-t border-marine/15 sm:hidden">
         <Bouton />
       </div>
