@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, IBM_Plex_Sans } from "next/font/google";
 import Link from "next/link";
+// Polices installées avec le projet (plus de téléchargement chez Google à chaque compilation).
+import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource/ibm-plex-sans/400.css";
+import "@fontsource/ibm-plex-sans/500.css";
+import "@fontsource/ibm-plex-sans/600.css";
 import "./globals.css";
 
-const titre = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-titre", weight: ["600", "800"], display: "swap" });
-const texte = IBM_Plex_Sans({ subsets: ["latin"], variable: "--font-texte", weight: ["400", "500", "600"], display: "swap" });
 
 // ⚠️ Remplace par ton vrai domaine quand tu l'auras (sinon laisse tel quel).
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://panier-perdu.vercel.app";
@@ -25,7 +27,7 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, them
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${titre.variable} ${texte.variable}`}>
+    <html lang="fr">
       <body className="font-texte antialiased">
         {children}
         <footer className="border-t border-marine/15 mt-16 px-5 py-8 text-sm text-gris">
