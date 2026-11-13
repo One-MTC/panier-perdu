@@ -6,7 +6,14 @@ import { DATE_LIVRAISON, EMAIL_CONTACT, LIEN_PAIEMENT } from "../config";
 
 export const dynamic = "force-dynamic";
 
-export default async function Compte() {
+const ERREURS: Record<string, string> = {
+  inactif: "Ton abonnement doit être actif pour lire tes paniers.",
+  aucune: "Aucune boutique n’est encore rattachée à ton compte.",
+  config: "La connexion à Shopify n’est pas encore configurée.",
+  shopify: "Shopify a refusé la lecture.",
+};
+
+export default async function Compte({ searchParams }: { searchParams: Record<string, string | undefined> }) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/connexion");
@@ -15,7 +22,14 @@ export default async function Compte() {
   const { data: abonne } = await base.from("abonnes").select("statut").eq("id", user.id).maybeSingle();
   const { data: boutiques } = await base.from("boutiques").select("id, domaine_shopify, actif").eq("abonne_id", user.id);
 
+  const comptes: Record<string, number> = {};
+  for (const b of boutiques ?? []) {
+    const { count } = await base.from("paniers").select("id", { count: "exact", head: true }).eq("boutique_id", b.id);
+    comptes[b.id] = count ?? 0;
+  }
+
   const actif = abonne?.statut === "actif";
+  const erreur = searchParams.erreur ? ERREURS[searchParams.erreur] ?? "Une erreur est survenue." : null;
 
   return (
     <main className="mx-auto max-w-xl px-5 pt-10 pb-16">
@@ -46,12 +60,27 @@ export default async function Compte() {
 
       <section className="mt-6 border-2 border-marine p-5">
         <p className="font-titre font-semibold text-lg">Ta boutique</p>
+        {searchParams.sync === "ok" && (
+          <p className="mt-2 border-l-4 border-moutarde pl-3 text-sm">
+            Lecture terminée : {searchParams.lus} panier(s) trouvé(s), {searchParams.enregistres} enregistré(s), {searchParams.sansemail} sans email, {searchParams.termines} finalisé(s).
+          </p>
+        )}
+        {erreur && (
+          <p role="alert" className="mt-2 text-sm text-red-700">
+            {erreur}{searchParams.detail ? ` (${searchParams.detail})` : ""}
+          </p>
+        )}
         {boutiques && boutiques.length > 0 ? (
-          <ul className="mt-2 space-y-1">
-            {boutiques.map((b) => (
-              <li key={b.id}>{b.domaine_shopify} : {b.actif ? "relances actives" : "en attente d’activation"}</li>
-            ))}
-          </ul>
+          <>
+            <ul className="mt-2 space-y-1">
+              {boutiques.map((b) => (
+                <li key={b.id}>{b.domaine_shopify} : {comptes[b.id]} panier(s) abandonné(s) lu(s)</li>
+              ))}
+            </ul>
+            <form action="/api/shopify/sync" method="post" className="mt-4">
+              <button type="submit" className="block w-full border-2 border-marine font-titre font-semibold px-6 py-3 min-h-[48px]">Actualiser mes paniers</button>
+            </form>
+          </>
         ) : (
           <>
             <p className="mt-1">Aucune boutique connectée pour l’instant.</p>
