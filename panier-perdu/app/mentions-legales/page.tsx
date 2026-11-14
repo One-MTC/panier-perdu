@@ -9,7 +9,7 @@ export default function Page() {
 
       <h2>Éditeur du site</h2>
       <p>[À COMPLÉTER : nom et prénom ou raison sociale], entrepreneur individuel ou société.</p>
-      <p>SIRET : [À COMPLÉTER]. Adresse : [À COMPLÉTER]. Email : [À COMPLÉTER].</p>
+      <p>SIRET : [À COMPLÉTER]. Adresse : [À COMPLÉTER]. Email : panier.perdu.service@gmail.com.</p>
       <p>TVA : [À COMPLÉTER : par exemple « TVA non applicable, article 293 B du CGI » si tu es en franchise en base].</p>
       <h2>Directeur de la publication</h2>
       <p>[À COMPLÉTER : ton nom].</p>

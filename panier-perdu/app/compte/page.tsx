@@ -7,10 +7,11 @@ import { DATE_LIVRAISON, EMAIL_CONTACT, LIEN_PAIEMENT } from "../config";
 export const dynamic = "force-dynamic";
 
 const ERREURS: Record<string, string> = {
-  inactif: "Ton abonnement doit être actif pour lire tes paniers.",
+  inactif: "Ton abonnement doit être actif pour utiliser cette fonction.",
   aucune: "Aucune boutique n’est encore rattachée à ton compte.",
   config: "La connexion à Shopify n’est pas encore configurée.",
-  shopify: "Shopify a refusé la lecture.",
+  lecture: "La lecture des paniers n’a pas abouti.",
+  envoi: "L’envoi des relances n’a pas abouti.",
 };
 
 export default async function Compte({ searchParams }: { searchParams: Record<string, string | undefined> }) {
@@ -62,7 +63,12 @@ export default async function Compte({ searchParams }: { searchParams: Record<st
         <p className="font-titre font-semibold text-lg">Ta boutique</p>
         {searchParams.sync === "ok" && (
           <p className="mt-2 border-l-4 border-moutarde pl-3 text-sm">
-            Lecture terminée : {searchParams.lus} panier(s) trouvé(s), {searchParams.enregistres} enregistré(s), {searchParams.sansemail} sans email, {searchParams.termines} finalisé(s).
+            Lecture terminée : {searchParams.lus} panier(s) trouvé(s), {searchParams.enregistres} enregistré(s), {searchParams.sansemail} sans email, {searchParams.termines} finalisé(s), {searchParams.planifiees} relance(s) planifiée(s).
+          </p>
+        )}
+        {searchParams.relances === "ok" && (
+          <p className="mt-2 border-l-4 border-moutarde pl-3 text-sm">
+            Envoi terminé : {searchParams.envoyees} envoyée(s), {searchParams.ignorees} en attente, {searchParams.annulees} annulée(s), {searchParams.echecs} en échec.
           </p>
         )}
         {erreur && (
@@ -80,6 +86,10 @@ export default async function Compte({ searchParams }: { searchParams: Record<st
             <form action="/api/shopify/sync" method="post" className="mt-4">
               <button type="submit" className="block w-full border-2 border-marine font-titre font-semibold px-6 py-3 min-h-[48px]">Actualiser mes paniers</button>
             </form>
+            <form action="/api/relances/moi" method="post" className="mt-3">
+              <button type="submit" className="block w-full border-2 border-marine font-titre font-semibold px-6 py-3 min-h-[48px]">Envoyer les relances dues (test)</button>
+            </form>
+            <p className="mt-2 text-xs text-gris">Les relances partiront seulement vers les clients qui ont accepté de recevoir des emails, avec un lien de désinscription.</p>
           </>
         ) : (
           <>
